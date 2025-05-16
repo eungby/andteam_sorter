@@ -115,21 +115,28 @@
 
         @media (max-width: 480px) {
             #mainTable {
-                display: flex;
-                flex-direction: column;
-                align-items: center;
+                display: grid;
+                grid-template-columns: 1fr 1.2fr 1fr;
+                grid-template-rows: 1fr 1fr;
+                max-width: 95vw;
+                /* 화면 너비 기준 */
+                margin: 10px auto;
+                gap: 10px;
             }
 
             #leftField,
-            #rightField,
-            .middleField {
+            #rightField {
                 width: 100%;
-                height: auto;
-
+                height: 200px;
+                /* 필요 시 비율 유지되게 조절 */
             }
 
             .middleField {
-                margin: 10px 0;
+                height: 100px;
+            }
+
+            #middleWrapper {
+                gap: 10px;
             }
         }
     </style>
