@@ -85,7 +85,7 @@
     <div class="middleField" style="grid-column: span 3;" onclick="if(finishFlag==0) sortList(0);">No Opinion</div>
   </div>
   <div id="resultField">
-    <p><small>(ONE TWO) We Link! こんにちは、&TEAMです!</small></p>
+    <p><small>(ONE TWO) We Link!</small></p>
   </div>
   <script>
     var namMember = ["K", "FUMA", "EJ", "NICHOLAS", "YUMA", "JO", "HARUA", "TAKI", "MAKI"];
@@ -181,7 +181,7 @@
 
     function showResult() {
       let ranking = 1, sameRank = 1, str = "";
-      str += '<table><tr><th>순위</th><th>이름</th></tr>';
+      str += '<table><tr><th>Rank</th><th>Name</th></tr>';
       for (let i = 0; i < namMember.length; i++) {
         str += `<tr><td>${ranking}</td><td>${namMember[lstMember[0][i]]}</td></tr>`;
         if (i < namMember.length - 1 && equal[lstMember[0][i]] === lstMember[0][i + 1]) {
