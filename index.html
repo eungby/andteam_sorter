@@ -1,204 +1,273 @@
 <!DOCTYPE html>
 <html lang="ko">
+
 <head>
-  <meta charset="UTF-8">
-  <title>&Team sort</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    body {
-      margin: 0;
-      font-family: '돋움', sans-serif;
-      text-align: center;
-      background-color: #ffffff;
-    }
-    #mainTable {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 10px;
-      max-width: 500px;
-      margin: 20px auto;
-      padding: 0 10px;
-    }
-    #battleNumber {
-      grid-column: span 3;
-      font-size: 1rem;
-      margin-bottom: 10px;
-    }
-    #leftField, #rightField, .middleField {
-      border: 1px solid #000;
-      padding: 20px;
-      min-height: 100px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1rem;
-    }
-    #leftField, #rightField, .middleField {
-      cursor: pointer;
-    }
-    #resultField {
-      max-width: 500px;
-      margin: 20px auto;
-      padding: 0 10px;
-      font-size: 0.9rem;
-    }
-    table {
-      width: 100%;
-      font-size: 0.9rem;
-      border-collapse: collapse;
-      margin-top: 10px;
-    }
-    th, td {
-      border: 1px solid #000;
-      padding: 5px;
-    }
-    th {
-      background-color: #000;
-      color: #fff;
-    }
-    a {
-      text-decoration: none;
-    }
-    a:hover {
-      color: #99ccff;
-    }
-    @media (max-width: 480px) {
-      #mainTable {
-        grid-template-columns: 1fr;
-      }
-      #leftField, #rightField, .middleField {
-        width: 100%;
-        font-size: 1.2rem;
-      }
-      .middleField {
-        margin: 10px 0;
-      }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <title>&Team sort</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body {
+            margin: 0;
+            font-family: '돋움', sans-serif;
+            background-color: #ffffff;
+
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            text-align: center;
+        }
+
+        #mainTable {
+            display: grid;
+            grid-template-columns: 1fr 1.2fr 1fr;
+            grid-template-rows: 0.3fr 1fr;
+            /* gap: 20px; */
+            row-gap: 0;
+            column-gap: 20px;
+            max-width: 700px;
+            margin: 0 auto;
+        }
+
+        #battleNumber {
+            grid-column: span 3;
+            font-size: 1rem;
+            /* margin-bottom: 10px; */
+            margin: 0;
+            padding: 0;
+            line-height: 1.2;
+            text-align: center;
+        }
+
+        #leftField,
+        #rightField {
+            width: 120px;
+            height: 250px;
+            border: 1px solid #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+
+        }
+
+        .middleField {
+            width: 100%;
+            height: 120px;
+            border: 1px solid #000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+
+        #resultField {
+            max-width: 500px;
+            margin: 20px auto;
+            padding: 0 10px;
+            font-size: 0.9rem;
+        }
+
+        table {
+            width: 100%;
+            font-size: 0.9rem;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+
+        th,
+        td {
+            border: 1px solid #000;
+            padding: 5px;
+        }
+
+        th {
+            background-color: #000;
+            color: #fff;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        a:hover {
+            color: #99ccff;
+        }
+
+        #leftField {
+            grid-row: span 2;
+            grid-column: 1;
+            justify-self: end;
+        }
+
+        #rightField {
+            grid-row: span 2;
+            grid-column: 3;
+        }
+
+        #middleWrapper {
+            grid-row: span 2;
+            grid-column: 2;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        @media (max-width: 480px) {
+            #mainTable {
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+            }
+
+            #leftField,
+            #rightField,
+            .middleField {
+                width: 100%;
+                height: auto;
+
+            }
+
+            .middleField {
+                margin: 10px 0;
+            }
+        }
+    </style>
 </head>
+
 <body>
-  <div id="mainTable">
-    <div id="battleNumber">&nbsp;</div>
-    <div id="leftField" onclick="if(finishFlag==0) sortList(-1);">&nbsp;</div>
-    <div class="middleField" onclick="if(finishFlag==0) sortList(0);">I like both</div>
-    <div id="rightField" onclick="if(finishFlag==0) sortList(1);">&nbsp;</div>
-    <div class="middleField" style="grid-column: span 3;" onclick="if(finishFlag==0) sortList(0);">No Opinion</div>
-  </div>
-  <div id="resultField">
-    <p><small>(ONE TWO) We Link!</small></p>
-  </div>
-  <script>
-    var namMember = ["K", "FUMA", "EJ", "NICHOLAS", "YUMA", "JO", "HARUA", "TAKI", "MAKI"];
-    var lstMember = [], parent = [], equal = [], rec = [];
-    var cmp1, cmp2, head1, head2, nrec;
-    var numQuestion, totalSize, finishSize, finishFlag;
+    <div id="wrapper">
+        <div id="mainTable">
+            <div id="battleNumber">&nbsp;</div>
 
-    function initList() {
-      let n = 0, mid;
-      lstMember[n] = namMember.map((_, i) => i);
-      parent[n] = -1;
-      totalSize = 0;
-      n++;
+            <div id="leftField" onclick="if(finishFlag==0) sortList(-1);">&nbsp;</div>
 
-      for (let i = 0; i < lstMember.length; i++) {
-        if (lstMember[i].length >= 2) {
-          mid = Math.ceil(lstMember[i].length / 2);
-          lstMember[n] = lstMember[i].slice(0, mid);
-          parent[n++] = i;
-          totalSize += lstMember[n - 1].length;
-          lstMember[n] = lstMember[i].slice(mid);
-          parent[n++] = i;
-          totalSize += lstMember[n - 1].length;
+            <div id="middleWrapper">
+                <div class="middleField" onclick="if(finishFlag==0) sortList(0);">I like both</div>
+                <div class="middleField" onclick="if(finishFlag==0) sortList(0);">no opinion</div>
+            </div>
+
+            <div id="rightField" onclick="if(finishFlag==0) sortList(1);">&nbsp;</div>
+        </div>
+
+
+        <div id="resultField">
+            <p><small>(ONE TWO) We Link!</small></p>
+        </div>
+    </div>
+    <script>
+        var namMember = ["K", "FUMA", "EJ", "NICHOLAS", "YUMA", "JO", "HARUA", "TAKI", "MAKI"];
+        var lstMember = [], parent = [], equal = [], rec = [];
+        var cmp1, cmp2, head1, head2, nrec;
+        var numQuestion, totalSize, finishSize, finishFlag;
+
+        function initList() {
+            let n = 0, mid;
+            lstMember[n] = namMember.map((_, i) => i);
+            parent[n] = -1;
+            totalSize = 0;
+            n++;
+
+            for (let i = 0; i < lstMember.length; i++) {
+                if (lstMember[i].length >= 2) {
+                    mid = Math.ceil(lstMember[i].length / 2);
+                    lstMember[n] = lstMember[i].slice(0, mid);
+                    parent[n++] = i;
+                    totalSize += lstMember[n - 1].length;
+                    lstMember[n] = lstMember[i].slice(mid);
+                    parent[n++] = i;
+                    totalSize += lstMember[n - 1].length;
+                }
+            }
+
+            for (let i = 0; i < namMember.length; i++) rec[i] = 0;
+            nrec = 0;
+            equal = Array(namMember.length).fill(-1);
+            cmp1 = lstMember.length - 2;
+            cmp2 = lstMember.length - 1;
+            head1 = head2 = 0;
+            numQuestion = 1;
+            finishSize = 0;
+            finishFlag = 0;
         }
-      }
 
-      for (let i = 0; i < namMember.length; i++) rec[i] = 0;
-      nrec = 0;
-      equal = Array(namMember.length).fill(-1);
-      cmp1 = lstMember.length - 2;
-      cmp2 = lstMember.length - 1;
-      head1 = head2 = 0;
-      numQuestion = 1;
-      finishSize = 0;
-      finishFlag = 0;
-    }
+        function sortList(flag) {
+            if (flag < 0 || flag > 0) {
+                const current = flag < 0 ? cmp1 : cmp2;
+                const head = flag < 0 ? head1++ : head2++;
+                rec[nrec++] = lstMember[current][head];
+                finishSize++;
+                while (equal[rec[nrec - 1]] != -1) {
+                    rec[nrec++] = equal[rec[nrec - 1]];
+                    finishSize++;
+                }
+            } else {
+                rec[nrec++] = lstMember[cmp1][head1++];
+                finishSize++;
+                while (equal[rec[nrec - 1]] != -1) {
+                    rec[nrec++] = equal[rec[nrec - 1]];
+                    finishSize++;
+                }
+                equal[rec[nrec - 1]] = lstMember[cmp2][head2];
+                rec[nrec++] = lstMember[cmp2][head2++];
+                finishSize++;
+                while (equal[rec[nrec - 1]] != -1) {
+                    rec[nrec++] = equal[rec[nrec - 1]];
+                    finishSize++;
+                }
+            }
 
-    function sortList(flag) {
-      if (flag < 0 || flag > 0) {
-        const current = flag < 0 ? cmp1 : cmp2;
-        const head = flag < 0 ? head1++ : head2++;
-        rec[nrec++] = lstMember[current][head];
-        finishSize++;
-        while (equal[rec[nrec - 1]] != -1) {
-          rec[nrec++] = equal[rec[nrec - 1]];
-          finishSize++;
+            if (head1 < lstMember[cmp1].length && head2 === lstMember[cmp2].length) {
+                while (head1 < lstMember[cmp1].length) rec[nrec++] = lstMember[cmp1][head1++];
+            } else if (head1 === lstMember[cmp1].length && head2 < lstMember[cmp2].length) {
+                while (head2 < lstMember[cmp2].length) rec[nrec++] = lstMember[cmp2][head2++];
+            }
+
+            if (head1 === lstMember[cmp1].length && head2 === lstMember[cmp2].length) {
+                lstMember[parent[cmp1]] = rec.slice(0, lstMember[cmp1].length + lstMember[cmp2].length);
+                lstMember.pop(); lstMember.pop();
+                cmp1 -= 2; cmp2 -= 2;
+                head1 = head2 = 0;
+                rec.fill(0); nrec = 0;
+            }
+
+            if (cmp1 < 0) {
+                document.getElementById("battleNumber").innerHTML = `Battle No.${numQuestion - 1}<br>${Math.floor(finishSize * 100 / totalSize)}% sorted.`;
+                showResult();
+                finishFlag = 1;
+            } else {
+                showImage();
+            }
         }
-      } else {
-        rec[nrec++] = lstMember[cmp1][head1++];
-        finishSize++;
-        while (equal[rec[nrec - 1]] != -1) {
-          rec[nrec++] = equal[rec[nrec - 1]];
-          finishSize++;
+
+        function showImage() {
+            document.getElementById("battleNumber").innerHTML = `Battle No.${numQuestion}<br>${Math.floor(finishSize * 100 / totalSize)}% sorted.`;
+            document.getElementById("leftField").innerHTML = namMember[lstMember[cmp1][head1]];
+            document.getElementById("rightField").innerHTML = namMember[lstMember[cmp2][head2]];
+            numQuestion++;
         }
-        equal[rec[nrec - 1]] = lstMember[cmp2][head2];
-        rec[nrec++] = lstMember[cmp2][head2++];
-        finishSize++;
-        while (equal[rec[nrec - 1]] != -1) {
-          rec[nrec++] = equal[rec[nrec - 1]];
-          finishSize++;
+
+        function showResult() {
+            let ranking = 1, sameRank = 1, str = "";
+            str += '<table><tr><th>Rank</th><th>Name</th></tr>';
+            for (let i = 0; i < namMember.length; i++) {
+                str += `<tr><td>${ranking}</td><td>${namMember[lstMember[0][i]]}</td></tr>`;
+                if (i < namMember.length - 1 && equal[lstMember[0][i]] === lstMember[0][i + 1]) {
+                    sameRank++;
+                } else {
+                    ranking += sameRank;
+                    sameRank = 1;
+                }
+            }
+            str += '</table>';
+            document.getElementById("resultField").innerHTML += str;
         }
-      }
 
-      if (head1 < lstMember[cmp1].length && head2 === lstMember[cmp2].length) {
-        while (head1 < lstMember[cmp1].length) rec[nrec++] = lstMember[cmp1][head1++];
-      } else if (head1 === lstMember[cmp1].length && head2 < lstMember[cmp2].length) {
-        while (head2 < lstMember[cmp2].length) rec[nrec++] = lstMember[cmp2][head2++];
-      }
-
-      if (head1 === lstMember[cmp1].length && head2 === lstMember[cmp2].length) {
-        lstMember[parent[cmp1]] = rec.slice(0, lstMember[cmp1].length + lstMember[cmp2].length);
-        lstMember.pop(); lstMember.pop();
-        cmp1 -= 2; cmp2 -= 2;
-        head1 = head2 = 0;
-        rec.fill(0); nrec = 0;
-      }
-
-      if (cmp1 < 0) {
-        document.getElementById("battleNumber").innerHTML = `Battle No.${numQuestion - 1}<br>${Math.floor(finishSize * 100 / totalSize)}% sorted.`;
-        showResult();
-        finishFlag = 1;
-      } else {
-        showImage();
-      }
-    }
-
-    function showImage() {
-      document.getElementById("battleNumber").innerHTML = `Battle No.${numQuestion}<br>${Math.floor(finishSize * 100 / totalSize)}% sorted.`;
-      document.getElementById("leftField").innerHTML = namMember[lstMember[cmp1][head1]];
-      document.getElementById("rightField").innerHTML = namMember[lstMember[cmp2][head2]];
-      numQuestion++;
-    }
-
-    function showResult() {
-      let ranking = 1, sameRank = 1, str = "";
-      str += '<table><tr><th>Rank</th><th>Name</th></tr>';
-      for (let i = 0; i < namMember.length; i++) {
-        str += `<tr><td>${ranking}</td><td>${namMember[lstMember[0][i]]}</td></tr>`;
-        if (i < namMember.length - 1 && equal[lstMember[0][i]] === lstMember[0][i + 1]) {
-          sameRank++;
-        } else {
-          ranking += sameRank;
-          sameRank = 1;
+        window.onload = function () {
+            initList();
+            showImage();
         }
-      }
-      str += '</table>';
-      document.getElementById("resultField").innerHTML += str;
-    }
-
-    window.onload = function () {
-      initList();
-      showImage();
-    }
-  </script>
+    </script>
 </body>
+
 </html>
