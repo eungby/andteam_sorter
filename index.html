@@ -130,11 +130,13 @@
                 height: 200px;
                 /* 필요 시 비율 유지되게 조절 */
             }
+
             #leftField,
-#rightField,
-.middleField {
-    font-size: clamp(0.8rem, 4vw, 1.2rem); /* 화면에 따라 자동 조절 */
-}
+            #rightField,
+            .middleField {
+                font-size: clamp(0.8rem, 4vw, 1.2rem);
+                /* 화면에 따라 자동 조절 */
+            }
 
             .middleField {
                 height: 100px;
@@ -204,53 +206,82 @@
         }
 
         function sortList(flag) {
+            if (finishFlag === 1) return;
+
+            if (
+                head1 >= lstMember[cmp1]?.length &&
+                head2 >= lstMember[cmp2]?.length
+            ) {
+                return;
+            }
+
             if (flag < 0 || flag > 0) {
                 const current = flag < 0 ? cmp1 : cmp2;
                 const head = flag < 0 ? head1++ : head2++;
                 rec[nrec++] = lstMember[current][head];
                 finishSize++;
-                while (equal[rec[nrec - 1]] != -1) {
-                    rec[nrec++] = equal[rec[nrec - 1]];
+
+                let last = rec[nrec - 1];
+                while (last !== undefined && equal[last] !== -1) {
+                    last = equal[last];
+                    rec[nrec++] = last;
                     finishSize++;
                 }
             } else {
+                // 같은 순위 처리
                 rec[nrec++] = lstMember[cmp1][head1++];
                 finishSize++;
-                while (equal[rec[nrec - 1]] != -1) {
-                    rec[nrec++] = equal[rec[nrec - 1]];
+
+                let last = rec[nrec - 1];
+                while (last !== undefined && equal[last] !== -1) {
+                    last = equal[last];
+                    rec[nrec++] = last;
                     finishSize++;
                 }
-                equal[rec[nrec - 1]] = lstMember[cmp2][head2];
+
+                equal[last] = lstMember[cmp2][head2];
                 rec[nrec++] = lstMember[cmp2][head2++];
                 finishSize++;
-                while (equal[rec[nrec - 1]] != -1) {
-                    rec[nrec++] = equal[rec[nrec - 1]];
+
+                last = rec[nrec - 1];
+                while (last !== undefined && equal[last] !== -1) {
+                    last = equal[last];
+                    rec[nrec++] = last;
                     finishSize++;
                 }
             }
 
+            // 남은 항목 처리
             if (head1 < lstMember[cmp1].length && head2 === lstMember[cmp2].length) {
                 while (head1 < lstMember[cmp1].length) rec[nrec++] = lstMember[cmp1][head1++];
             } else if (head1 === lstMember[cmp1].length && head2 < lstMember[cmp2].length) {
                 while (head2 < lstMember[cmp2].length) rec[nrec++] = lstMember[cmp2][head2++];
             }
 
+            // 두 그룹 다 끝났을 때 병합
             if (head1 === lstMember[cmp1].length && head2 === lstMember[cmp2].length) {
                 lstMember[parent[cmp1]] = rec.slice(0, lstMember[cmp1].length + lstMember[cmp2].length);
-                lstMember.pop(); lstMember.pop();
-                cmp1 -= 2; cmp2 -= 2;
+                lstMember.pop(); // cmp2
+                lstMember.pop(); // cmp1
+                cmp1 -= 2;
+                cmp2 -= 2;
                 head1 = head2 = 0;
-                rec.fill(0); nrec = 0;
+                rec = [];
+                nrec = 0;
             }
 
+            // 모든 정렬이 끝났는지 확인
             if (cmp1 < 0) {
-                document.getElementById("battleNumber").innerHTML = `Battle No.${numQuestion - 1}<br>${Math.floor(finishSize * 100 / totalSize)}% sorted.`;
+                document.getElementById("battleNumber").innerHTML =
+                    `Battle No.${numQuestion - 1}<br>100% sorted.`;
                 showResult();
                 finishFlag = 1;
             } else {
-                showImage();
+                showImage(); // 다음 비교쌍 보여주기
             }
         }
+
+
 
         function showImage() {
             document.getElementById("battleNumber").innerHTML = `Battle No.${numQuestion}<br>${Math.floor(finishSize * 100 / totalSize)}% sorted.`;
@@ -278,8 +309,9 @@
         window.onload = function () {
             initList();
             showImage();
-        }
+        };
     </script>
+
 </body>
 
 </html>
