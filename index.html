@@ -21,7 +21,7 @@
         #mainTable {
             display: grid;
             grid-template-columns: 1fr 1.2fr 1fr;
-            grid-template-rows: 0.3fr 1fr;
+            grid-template-rows: 250px;
             /* gap: 20px; */
             row-gap: 0;
             column-gap: 20px;
@@ -118,10 +118,12 @@
                 display: grid;
                 grid-template-columns: 1fr 1.2fr 1fr;
                 grid-template-rows: 1fr 1fr;
-                max-width: 95vw;
+                max-width: 100vw;
                 /* 화면 너비 기준 */
                 margin: 10px auto;
                 gap: 10px;
+                padding: 0 10px;
+                overflow-x:auto ;
             }
 
             #leftField,
@@ -134,16 +136,18 @@
             #leftField,
             #rightField,
             .middleField {
-                font-size: clamp(0.8rem, 4vw, 1.2rem);
-                /* 화면에 따라 자동 조절 */
+                font-size: 0.8rem;
             }
 
             .middleField {
-                height: 100px;
+                flex:1;
+                height: auto;
+                font-size: 0.9rem;
             }
 
             #middleWrapper {
                 gap: 10px;
+                height: 200px;
             }
         }
     </style>
@@ -206,78 +210,104 @@
         }
 
         function sortList(flag) {
-            if (finishFlag === 1) return;
+            var i;
+            var str;
 
-            if (
-                head1 >= lstMember[cmp1]?.length &&
-                head2 >= lstMember[cmp2]?.length
-            ) {
-                return;
-            }
-
-            if (flag < 0 || flag > 0) {
-                const current = flag < 0 ? cmp1 : cmp2;
-                const head = flag < 0 ? head1++ : head2++;
-                rec[nrec++] = lstMember[current][head];
+            // rec preservation
+            if (flag < 0) {
+                rec[nrec] = lstMember[cmp1][head1];
+                head1++;
+                nrec++;
                 finishSize++;
-
-                let last = rec[nrec - 1];
-                while (last !== undefined && equal[last] !== -1) {
-                    last = equal[last];
-                    rec[nrec++] = last;
+                while (equal[rec[nrec - 1]] != -1) {
+                    rec[nrec] = equal[rec[nrec - 1]];
+                    nrec++;
+                    finishSize++;
+                }
+            } else if (flag > 0) {
+                rec[nrec] = lstMember[cmp2][head2];
+                head2++;
+                nrec++;
+                finishSize++;
+                while (equal[rec[nrec - 1]] != -1) {
+                    rec[nrec] = equal[rec[nrec - 1]];
+                    nrec++;
                     finishSize++;
                 }
             } else {
-                // 같은 순위 처리
-                rec[nrec++] = lstMember[cmp1][head1++];
+                // I like both / no opinion
+                rec[nrec] = lstMember[cmp1][head1];
+                var last = lstMember[cmp1][head1];
+                head1++;
+                nrec++;
                 finishSize++;
-
-                let last = rec[nrec - 1];
-                while (last !== undefined && equal[last] !== -1) {
+                while (equal[last] != -1) {
+                    rec[nrec] = equal[last];
                     last = equal[last];
-                    rec[nrec++] = last;
+                    nrec++;
                     finishSize++;
                 }
 
                 equal[last] = lstMember[cmp2][head2];
-                rec[nrec++] = lstMember[cmp2][head2++];
-                finishSize++;
 
-                last = rec[nrec - 1];
-                while (last !== undefined && equal[last] !== -1) {
+                last = lstMember[cmp2][head2];
+                rec[nrec] = last;
+                head2++;
+                nrec++;
+                finishSize++;
+                while (equal[last] != -1) {
+                    rec[nrec] = equal[last];
                     last = equal[last];
-                    rec[nrec++] = last;
+                    nrec++;
                     finishSize++;
                 }
             }
 
-            // 남은 항목 처리
-            if (head1 < lstMember[cmp1].length && head2 === lstMember[cmp2].length) {
-                while (head1 < lstMember[cmp1].length) rec[nrec++] = lstMember[cmp1][head1++];
-            } else if (head1 === lstMember[cmp1].length && head2 < lstMember[cmp2].length) {
-                while (head2 < lstMember[cmp2].length) rec[nrec++] = lstMember[cmp2][head2++];
+            // Process leftover elements
+            if (head1 < lstMember[cmp1].length && head2 == lstMember[cmp2].length) {
+                while (head1 < lstMember[cmp1].length) {
+                    rec[nrec] = lstMember[cmp1][head1];
+                    head1++;
+                    nrec++;
+                    finishSize++;
+                }
+            } else if (head1 == lstMember[cmp1].length && head2 < lstMember[cmp2].length) {
+                while (head2 < lstMember[cmp2].length) {
+                    rec[nrec] = lstMember[cmp2][head2];
+                    head2++;
+                    nrec++;
+                    finishSize++;
+                }
             }
 
-            // 두 그룹 다 끝났을 때 병합
-            if (head1 === lstMember[cmp1].length && head2 === lstMember[cmp2].length) {
-                lstMember[parent[cmp1]] = rec.slice(0, lstMember[cmp1].length + lstMember[cmp2].length);
-                lstMember.pop(); // cmp2
-                lstMember.pop(); // cmp1
-                cmp1 -= 2;
-                cmp2 -= 2;
-                head1 = head2 = 0;
-                rec = [];
+            // Merge complete: write result back
+            if (head1 == lstMember[cmp1].length && head2 == lstMember[cmp2].length) {
+                for (i = 0; i < lstMember[cmp1].length + lstMember[cmp2].length; i++) {
+                    lstMember[parent[cmp1]][i] = rec[i];
+                }
+
+                lstMember.pop();
+                lstMember.pop();
+
+                cmp1 = cmp1 - 2;
+                cmp2 = cmp2 - 2;
+                head1 = 0;
+                head2 = 0;
+
+                // Reset rec buffer
+                for (i = 0; i < rec.length; i++) {
+                    rec[i] = 0;
+                }
                 nrec = 0;
             }
 
-            // 모든 정렬이 끝났는지 확인
             if (cmp1 < 0) {
-                document.getElementById("battleNumber").innerHTML =
-                    `Battle No.${numQuestion - 1}<br>100% sorted.`;
+                str = "battle #" + (numQuestion - 1) + "<br>" + Math.floor(finishSize * 100 / totalSize) + "% sorted.";
+                document.getElementById("battleNumber").innerHTML = str;
                 showResult();
                 finishFlag = 1;
             } else {
-                showImage(); // 다음 비교쌍 보여주기
+                showImage();
             }
         }
 
